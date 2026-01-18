@@ -224,45 +224,46 @@ function calc() {
 </script>
 
 <script>
-    const obiecteLeasing = [
-  {
-    nume: "Mașină",
-    pret: 30000,
-    imagine: "masina.webp"
-  },
-  {
-    nume: "Casă",
-    pret: 150000,
-    imagine: "casa.jpg"
-  },
-  {
-    nume: "Spațiu comercial",
-    pret: 400000,
-    imagine: "spatiu_comercial.jpg"
-  },
-  {
-    nume: "Yacht",
-    pret: 2500000,
-    imagine: "yacht.jpg"
-  },
+  
+  const obiecteLeasing = [
+    {
+      nume: "Mașină",
+      pret: 150000,          // ~30.000 EUR
+      imagine: "masina.webp"
+    },
+    {
+      nume: "Casă",
+      pret: 750000,          // ~150.000 EUR
+      imagine: "casa.jpg"
+    },
+    {
+      nume: "Spațiu comercial",
+      pret: 2000000,         // ~400.000 EUR
+      imagine: "spatiu_comercial.jpg"
+    },
+    {
+      nume: "Yacht",
+      pret: 12500000,        // ~2.500.000 EUR
+      imagine: "yacht.jpg"
+    },
 
-  {
-    nume: "Furnică (transport logistic)",
-    pret: 0.06,
-    imagine: "furnica.jpg"
-  },
-  {
-    nume: "Pix",
-    pret: 8,
-    imagine: "pix.jpg"
-  },
-  {
-    nume: "Planeta Jupiter",
-    pret: 1000000000000000000000000000000,
-    imagine: "jupiter.jpg"
-  }
-];
-
+    // obiecte speciale / amuzante
+    {
+      nume: "Furnică (transport logistic)",
+      pret: 0.06,            // estimare din colonii reale
+      imagine: "furnica.jpg"
+    },
+    {
+      nume: "Pix",
+      pret: 8,               // pix decent
+      imagine: "pix.jpg"
+    },
+    {
+      nume: "Planeta Jupiter",
+      pret: 1000000000000000000000000000000n,
+      imagine: "jupiter.jpg"
+    }
+  ];
 
 
 const container = document.getElementById("obiecte");
