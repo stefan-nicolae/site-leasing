@@ -25,84 +25,88 @@
             <td>Utilizatorul de obicei cumpara bunul la final platind valoarea reziduala.</td>
             <td>Intretinearea poate fi inclusa in contract</td>
         </tr>
+        <tr>
+            <td>Potrivit pentru investiții pe termen lung</td>
+            <td>Potrivit pentru flexibilitate și risc minim.</td>
+        </tr>
     </table>
 
-<form id="leasingForm">
-  <fieldset>
-    <legend>Input</legend>
-
-    <label>
-      Preț bun (lei) – doar informativ
-      <input type="number" id="price" min="1000" step="100" value="50000">
-    </label>
-
-    <label>
-      Tip leasing
-      <select id="type" onchange="toggleFields()">
-        <option value="financiar">Financiar</option>
-        <option value="operational">Operațional</option>
-      </select>
-    </label>
-
-    <label>
-      Durată (luni)
-      <input type="number" id="months" min="12" max="84" value="36">
-    </label>
-
-    <!-- FINANCIAR -->
-    <label>
-      Dobândă anuală (%) – financiar
-      <input type="number" id="interest" min="1" max="25" step="0.1" value="8">
-    </label>
-
-    <label>
-      Valoare reziduală (lei) – financiar
-      <input type="number" id="residual" min="0" step="100" value="5000">
-    </label>
-
-    <label>
-      Cost lunar întreținere & reparații (lei) – financiar
-      <input type="number" id="maintenance" min="0" step="50" value="300">
-    </label>
-
-    <!-- OPERAȚIONAL -->
-    <label>
-      Tarif lunar leasing operațional (lei)
-      <input type="number" id="operationalRate" min="500" step="50" value="1200">
-    </label>
-
-    <label>
-      Cost lunar servicii incluse (lei)
-      <input type="number" id="services" min="0" step="50" value="400">
-    </label>
-
-    <button type="button" onclick="calc()">Calculează</button>
-  </fieldset>
-
-  <fieldset>
-    <legend>Output</legend>
-
-    <label>Rată lunară totală:
-      <output id="monthly"></output>
-    </label>
-
-    <label>Cost total leasing:
-      <output id="total"></output>
-    </label>
-
-    <label>Cost total reparații:
-      <output id="repairs"></output>
-    </label>
-
-    <label>Cine suportă riscurile:
-      <output id="risk"></output>
-    </label>
-
-    <label>Concluzie:
-      <output id="conclusion"></output>
-    </label>
-  </fieldset>
-</form>
+<div id="main">
+    <form id="leasingForm">
+      <fieldset>
+        <legend>Input</legend>
+    
+        <label>
+          Preț bun (lei)
+          <input type="number" id="price" min="1000" step="100" value="50000">
+        </label>
+    
+        <label>
+          Tip leasing
+          <select id="type" onchange="toggleFields()">
+            <option value="financiar">Financiar</option>
+            <option value="operational">Operațional</option>
+          </select>
+        </label>
+    
+        <label>
+          Durată (luni)
+          <input type="number" id="months" min="12" max="84" value="36">
+        </label>
+    
+        <!-- FINANCIAR -->
+        <label>
+          Dobândă anuală (%) – financiar
+          <input type="number" id="interest" min="1" max="25" step="0.1" value="8">
+        </label>
+    
+        <label>
+          Valoare reziduală (lei) – financiar
+          <input type="text" id="residual" min="0" step="100" value="5000">
+        </label>
+    
+        <label>
+          Cost lunar întreținere & reparații (lei) – financiar
+          <input type="text" id="maintenance" min="0" step="50" value="300">
+        </label>
+    
+        <!-- OPERAȚIONAL -->
+        <label>
+          Tarif lunar leasing operațional (lei)
+          <input type="text" id="operationalRate" min="500" step="50" value="1200">
+        </label>
+    
+        <label>
+          Cost lunar servicii incluse (lei)
+          <input type="number" id="services" min="0" step="50" value="400">
+        </label>
+    
+        <button type="button" onclick="calc()">Calculează</button>
+      </fieldset>
+    
+      <fieldset>
+        <legend>Output</legend>
+    
+        <label>Rată lunară totală:
+          <output id="monthly"></output>
+        </label>
+    
+        <label>Cost total leasing:
+          <output id="total"></output>
+        </label>
+    
+        <label>Cost total reparații:
+          <output id="repairs"></output>
+        </label>
+    
+        <label>Cine suportă riscurile:
+          <output id="risk"></output>
+        </label>
+      </fieldset>
+    </form>
+    
+    <section id="obiecte"></section>
+</div>
 
 <script>
 const priceEl = document.getElementById("price");
@@ -118,7 +122,41 @@ const monthlyOut = document.getElementById("monthly");
 const totalOut = document.getElementById("total");
 const repairsOut = document.getElementById("repairs");
 const riskOut = document.getElementById("risk");
-const conclusionOut = document.getElementById("conclusion");
+
+priceEl.addEventListener("input", estimateFromPrice);
+
+function estimateFromPrice() {
+  const price = Number(priceEl.value);
+  const months = Number(monthsEl.value);
+
+  if (!price || months < 12) return;
+
+  // ===== FINANCIAR =====
+  if (typeEl.value === "financiar") {
+
+    // valoare reziduală ~20% din preț
+    const residual = price * 0.20;
+
+    // mentenanță ~5% pe an → lunar
+    const maintenance = (price * 0.05) / 12;
+
+    residualEl.value = residual.toFixed(10);
+    maintenanceEl.value = maintenance.toFixed(10);
+  }
+
+  // ===== OPERAȚIONAL =====
+  if (typeEl.value === "operational") {
+
+    // depreciere + risc/profit
+    const depreciation = (price * 0.75) / months;
+    const riskProfit = (price * 0.03) / 12;
+
+    const operationalRate = depreciation + riskProfit;
+
+    operationalRateEl.value = operationalRate.toFixed(10);
+  }
+}
+
 
 function toggleFields() {
   const f = typeEl.value === "financiar";
@@ -129,6 +167,7 @@ function toggleFields() {
 
   operationalRateEl.disabled = f;
   servicesEl.disabled = f;
+  estimateFromPrice();
 }
 
 toggleFields();
@@ -146,12 +185,11 @@ function calc() {
   let total = 0;
   let repairs = 0;
   let risk = "";
-  let conclusion = "";
 
   if (typeEl.value === "financiar") {
     const interest = +interestEl.value / 100 / 12;
-    const residual = +residualEl.value;
-    const maintenance = +maintenanceEl.value;
+    const residual = parseFloat(residualEl.value);
+    const maintenance = parseFloat(maintenanceEl.value);
 
     if (residual >= price) {
       alert("Valoarea reziduală trebuie să fie mai mică decât prețul bunului.");
@@ -164,10 +202,9 @@ function calc() {
     total = monthly * months + residual + repairs;
 
     risk = "Utilizatorul";
-    conclusion = "Leasingul financiar este potrivit pentru investiții pe termen lung.";
   } 
   else {
-    const opRate = +operationalRateEl.value;
+    const opRate = parseFloat(operationalRateEl.value);
     const services = +servicesEl.value;
 
     monthly = opRate + services;
@@ -175,19 +212,84 @@ function calc() {
     total = monthly * months;
 
     risk = "Firma de leasing";
-    conclusion = "Leasingul operațional este potrivit pentru flexibilitate și risc minim.";
   }
 
-  monthlyOut.textContent = monthly.toFixed(2) + " lei";
-  totalOut.textContent = total.toFixed(2) + " lei";
-  repairsOut.textContent = repairs.toFixed(2) + " lei";
+  monthlyOut.textContent = monthly.toFixed(10) + " lei";
+  totalOut.textContent = total.toFixed(10) + " lei";
+  repairsOut.textContent = repairs.toFixed(10) + " lei";
   riskOut.textContent = risk;
-  conclusionOut.textContent = conclusion;
 }
 
 
 </script>
 
+<script>
+    const obiecteLeasing = [
+  {
+    nume: "Mașină",
+    pret: 30000,
+    imagine: "masina.webp"
+  },
+  {
+    nume: "Casă",
+    pret: 150000,
+    imagine: "casa.jpg"
+  },
+  {
+    nume: "Spațiu comercial",
+    pret: 400000,
+    imagine: "spatiu_comercial.jpg"
+  },
+  {
+    nume: "Yacht",
+    pret: 2500000,
+    imagine: "yacht.jpg"
+  },
+
+  {
+    nume: "Furnică (transport logistic)",
+    pret: 0.06,
+    imagine: "furnica.jpg"
+  },
+  {
+    nume: "Pix",
+    pret: 8,
+    imagine: "pix.jpg"
+  },
+  {
+    nume: "Planeta Jupiter",
+    pret: 1000000000000000000000000000000,
+    imagine: "jupiter.jpg"
+  }
+];
+
+
+
+const container = document.getElementById("obiecte");
+
+obiecteLeasing.forEach(obj => {
+  const card = document.createElement("div");
+  card.className = "obiect";
+
+  card.innerHTML = `
+    <img src="images/${obj.imagine}" alt="${obj.nume}">
+    <div>
+        <h3>${obj.nume}</h3>
+        <p>Preț estimat: ${obj.pret.toLocaleString("ro-RO")} lei</p>
+    </div>
+  `;
+
+  card.addEventListener("click", () => {
+    priceEl.value = obj.pret;
+
+    priceEl.dispatchEvent(new Event("input"));
+    calc()
+  });
+  container.appendChild(card);
+
+});
+
+</script>
 
 </body>
 </html>

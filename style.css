@@ -70,3 +70,35 @@ label {
   padding-bottom: 4px;
   margin-bottom: 10px;
 }
+
+section {
+  display: flex;
+  height: 500px;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-top: 20px;
+}
+
+section .obiect img {
+  width: 100%;
+  height: auto;
+}
+
+section .obiect {
+  cursor: pointer;
+  width: 100px;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px dashed rgb(156, 156, 156);
+  padding:4px;
+}
+
+section .obiect:hover {
+  opacity: 0.6;
+}
+
+section .obiect p {
+  word-break: break-all;
+}
