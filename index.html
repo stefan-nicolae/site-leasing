@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leasing</title>
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css/normalize.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Leasing – o alternativă benefică a surselor de finanțare ale firmei?</h1>
+    <img id="diagrama1" src="images/diagrama1.png" alt="diagrama1">
+    <table>
+        <tr>
+        <th>Financiar</th>
+        <th>Operational</th>
+        </tr>
+
+        <tr>
+            <td>Utilizatorul trateaza bunul de parca ar fi al lui (contabilitate, reparatii).</td>
+            <td>Bunul e pentru folosinta temporara, se returneaza.</td>
+        </tr>
+        <tr>
+            <td>Utilizatorul de obicei cumpara bunul la final platind valoarea reziduala.</td>
+            <td>Intretinearea poate fi inclusa in contract</td>
+        </tr>
+    </table>
+
+<form id="leasingForm">
+  <fieldset>
+    <legend>Input</legend>
+
+    <label>
+      Preț bun (lei) – doar informativ
+      <input type="number" id="price" min="1000" step="100" value="50000">
+    </label>
+
+    <label>
+      Tip leasing
+      <select id="type" onchange="toggleFields()">
+        <option value="financiar">Financiar</option>
+        <option value="operational">Operațional</option>
+      </select>
+    </label>
+
+    <label>
+      Durată (luni)
+      <input type="number" id="months" min="12" max="84" value="36">
+    </label>
+
+    <!-- FINANCIAR -->
+    <label>
+      Dobândă anuală (%) – financiar
+      <input type="number" id="interest" min="1" max="25" step="0.1" value="8">
+    </label>
+
+    <label>
+      Valoare reziduală (lei) – financiar
+      <input type="number" id="residual" min="0" step="100" value="5000">
+    </label>
+
+    <label>
+      Cost lunar întreținere & reparații (lei) – financiar
+      <input type="number" id="maintenance" min="0" step="50" value="300">
+    </label>
+
+    <!-- OPERAȚIONAL -->
+    <label>
+      Tarif lunar leasing operațional (lei)
+      <input type="number" id="operationalRate" min="500" step="50" value="1200">
+    </label>
+
+    <label>
+      Cost lunar servicii incluse (lei)
+      <input type="number" id="services" min="0" step="50" value="400">
+    </label>
+
+    <button type="button" onclick="calc()">Calculează</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Output</legend>
+
+    <label>Rată lunară totală:
+      <output id="monthly"></output>
+    </label>
+
+    <label>Cost total leasing:
+      <output id="total"></output>
+    </label>
+
+    <label>Cost total reparații:
+      <output id="repairs"></output>
+    </label>
+
+    <label>Cine suportă riscurile:
+      <output id="risk"></output>
+    </label>
+
+    <label>Concluzie:
+      <output id="conclusion"></output>
+    </label>
+  </fieldset>
+</form>
+
+<script>
+const priceEl = document.getElementById("price");
+const monthsEl = document.getElementById("months");
+const interestEl = document.getElementById("interest");
+const residualEl = document.getElementById("residual");
+const maintenanceEl = document.getElementById("maintenance");
+const operationalRateEl = document.getElementById("operationalRate");
+const servicesEl = document.getElementById("services");
+const typeEl = document.getElementById("type");
+
+const monthlyOut = document.getElementById("monthly");
+const totalOut = document.getElementById("total");
+const repairsOut = document.getElementById("repairs");
+const riskOut = document.getElementById("risk");
+const conclusionOut = document.getElementById("conclusion");
+
+function toggleFields() {
+  const f = typeEl.value === "financiar";
+
+  interestEl.disabled = !f;
+  residualEl.disabled = !f;
+  maintenanceEl.disabled = !f;
+
+  operationalRateEl.disabled = f;
+  servicesEl.disabled = f;
+}
+
+toggleFields();
+
+function calc() {
+  const price = +priceEl.value;
+  const months = +monthsEl.value;
+
+  if (months < 12) {
+    alert("Durata minimă este 12 luni.");
+    return;
+  }
+
+  let monthly = 0;
+  let total = 0;
+  let repairs = 0;
+  let risk = "";
+  let conclusion = "";
+
+  if (typeEl.value === "financiar") {
+    const interest = +interestEl.value / 100 / 12;
+    const residual = +residualEl.value;
+    const maintenance = +maintenanceEl.value;
+
+    if (residual >= price) {
+      alert("Valoarea reziduală trebuie să fie mai mică decât prețul bunului.");
+      return;
+    }
+
+    const financed = price - residual;
+    monthly = (financed * interest) / (1 - Math.pow(1 + interest, -months));
+    repairs = maintenance * months;
+    total = monthly * months + residual + repairs;
+
+    risk = "Utilizatorul";
+    conclusion = "Leasingul financiar este potrivit pentru investiții pe termen lung.";
+  } 
+  else {
+    const opRate = +operationalRateEl.value;
+    const services = +servicesEl.value;
+
+    monthly = opRate + services;
+    repairs = 0;
+    total = monthly * months;
+
+    risk = "Firma de leasing";
+    conclusion = "Leasingul operațional este potrivit pentru flexibilitate și risc minim.";
+  }
+
+  monthlyOut.textContent = monthly.toFixed(2) + " lei";
+  totalOut.textContent = total.toFixed(2) + " lei";
+  repairsOut.textContent = repairs.toFixed(2) + " lei";
+  riskOut.textContent = risk;
+  conclusionOut.textContent = conclusion;
+}
+
+
+</script>
+
+
+</body>
+</html>
