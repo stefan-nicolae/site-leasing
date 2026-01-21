@@ -102,3 +102,7 @@ section .obiect:hover {
 section .obiect p {
   word-break: break-all;
 }
+
+p {
+  text-align: left;
+}
