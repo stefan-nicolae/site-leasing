@@ -80,7 +80,7 @@
     
         <label>
           Cost lunar servicii incluse (lei)
-          <input type="number" id="services" min="0" step="50" value="400">
+          <input type="text" id="services" min="0" step="50" value="400">
         </label>
     
         <button type="button" onclick="calc()">Calculează</button>
@@ -149,14 +149,21 @@ function estimateFromPrice() {
   // ===== OPERAȚIONAL =====
   if (typeEl.value === "operational") {
 
-    // depreciere + risc/profit
+    // depreciere ~75%
     const depreciation = (price * 0.75) / months;
+
+    // risc + profit ~3% / an
     const riskProfit = (price * 0.03) / 12;
 
     const operationalRate = depreciation + riskProfit;
 
+    // servicii incluse ~4% / an
+    const services = (price * 0.04) / 12;
+
     operationalRateEl.value = operationalRate.toFixed(10);
+    servicesEl.value = services.toFixed(10);
   }
+
 }
 
 
